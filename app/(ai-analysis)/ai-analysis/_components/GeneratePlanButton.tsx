@@ -2,11 +2,7 @@
 
 import { useState } from "react";
 
-export function GeneratePlanButton({
-  weakAreas,
-}: {
-  weakAreas: string[];
-}) {
+export function GeneratePlanButton({ weakAreas }: { weakAreas: string[] }) {
   const [loading, setLoading] = useState(false);
   const [plan, setPlan] = useState<any>(null);
 
@@ -19,9 +15,7 @@ export function GeneratePlanButton({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          weakAreas,
-        }),
+        body: JSON.stringify({ weakAreas }),
       });
 
       const data = await res.json();
@@ -34,7 +28,7 @@ export function GeneratePlanButton({
   };
 
   return (
-    <div>
+    <div className="space-y-4">
       <button
         onClick={handleGenerate}
         disabled={loading}
@@ -43,32 +37,48 @@ export function GeneratePlanButton({
         {loading ? "Generating..." : "Generate Learning Plan"}
       </button>
 
-      {/* RESULT */}
-      {plan?.analysis ? (
-        <p className="text-sm text-gray-700 mb-3">{plan.analysis}</p>
-      ) : (
-        <p className="text-sm text-red-500">
-          AI tidak mengembalikan analisis
-        </p>
+      {/* ANALYSIS */}
+      {plan?.analysis && (
+        <p className="text-sm text-gray-700">{plan.analysis}</p>
       )}
 
-      {Array.isArray(plan?.weeklySchedule) &&
-      plan.weeklySchedule.length > 0 ? (
-        <div className="space-y-3">
-          {plan.weeklySchedule.map((p: any, i: number) => (
-            <div key={i} className="p-3 bg-gray-50 rounded">
-              <p className="font-medium">
-                {p.day} - {p.date}
-              </p>
-              <p className="text-sm text-gray-700">
-                {p.activityTitle}
-              </p>
+      {/* LEARNING PLAN */}
+      {Array.isArray(plan?.learningPlan) && plan?.learningPlan?.length > 0 ? (
+        <div className="space-y-6">
+          {plan.learningPlan.map((week: any) => (
+            <div key={week.week} className="p-4 bg-gray-100 rounded-lg">
+              <h2 className="font-bold mb-2">
+                Week {week.week} -{" "}
+                {Array.isArray(week.focusDomain)
+                  ? week.focusDomain.join(", ")
+                  : "-"}
+              </h2>
+
+              <div className="space-y-2">
+                {Array.isArray(week.days) &&
+                  week.days.map((d: any) => (
+                    <div
+                      key={`${week.week}-${d.date}-${d.questionId}`}
+                      className="p-2 bg-white rounded"
+                    >
+                      <p className="font-medium">
+                        {d.day} - {d.date}
+                      </p>
+
+                      <p className="text-sm text-gray-700">{d.activityTitle}</p>
+
+                      <p className="text-xs text-gray-500">
+                        Question ID: {d.questionId}
+                      </p>
+                    </div>
+                  ))}
+              </div>
             </div>
           ))}
         </div>
       ) : (
         <p className="text-sm text-gray-500">
-          Tidak ada jadwal yang dihasilkan AI
+          Tidak ada learning plan yang dihasilkan AI
         </p>
       )}
     </div>
