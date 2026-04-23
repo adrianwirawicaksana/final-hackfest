@@ -76,6 +76,8 @@ export async function POST(req: Request) {
             riskLevel: resultScreen.riskLevel,
             action: resultScreen.action,
             detail: resultScreen.detail,
+            previousScore: existing.score,
+            previousRiskLevel: existing.riskLevel,
           },
         });
       } else {

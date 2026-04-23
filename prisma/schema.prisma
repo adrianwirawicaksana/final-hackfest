@@ -30,7 +30,10 @@ model ScreeningResult {
   riskLevel String
   action    String
   detail    Json
+  previousScore     Int?     
+  previousRiskLevel String?
   createdAt DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
 
 model Subscription {
